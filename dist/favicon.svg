@@ -1,0 +1,9 @@
+﻿<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="64" height="64" rx="14" fill="white"/>
+  <path d="M12 24l40-3 3 15-40 4-3-16z" fill="white" stroke="#67C5D8" stroke-width="2.8" stroke-linejoin="round"/>
+  <text x="32" y="35" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="900" fill="#050505">FLORES</text>
+  <path d="M18 18c6-6 14-8 24 0" stroke="#15803D" stroke-width="2.5" stroke-linecap="round"/>
+  <circle cx="25" cy="15" r="3.5" fill="#FACC15" stroke="#CA8A04" stroke-width="1"/>
+  <circle cx="39" cy="15" r="3.5" fill="#FACC15" stroke="#CA8A04" stroke-width="1"/>
+  <text x="32" y="51" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="300" fill="#050505">Victor</text>
+</svg>
