@@ -1,9 +1,8 @@
 ﻿import { useState, useEffect } from 'react';
 import { ShoppingCart, Menu, X, Heart, Package, Truck, MessageCircle, Flower2, CheckCircle, MapPin, Clock, Phone, Mail, Facebook, Instagram, Twitter, ChevronDown, Search, Star, Plus, Minus, Trash2, TrendingUp, Users, Award, Sparkles, ArrowRight, Gift, Shield } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import whatsappIcon from '../assets/icons/whatsapp.png';
 import brandLogo_nbg from '../assets/images/logo_flores_victor.png';
-import { colombiaMunicipalities } from '../data/colombiaMunicipalities';
 
 interface Product {
   id: number;
@@ -159,6 +158,7 @@ const heroCards = [
 ];
 
 export default function App() {
+  const prefersReducedMotion = useReducedMotion();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -169,6 +169,7 @@ export default function App() {
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const [cartPulse, setCartPulse] = useState(false);
   const [recentlyAdded, setRecentlyAdded] = useState<Product | null>(null);
+  const [municipalityOptions, setMunicipalityOptions] = useState<string[]>([]);
   const [checkoutData, setCheckoutData] = useState({
     name: '',
     phone: '',
@@ -181,19 +182,41 @@ export default function App() {
   });
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(() => {
+        setScrolled((current) => {
+          const next = window.scrollY > 50;
+          return current === next ? current : next;
+        });
+        ticking = false;
+      });
     };
-    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
+    if (prefersReducedMotion) return;
     const interval = setInterval(() => {
       setCurrentHeroImage((prev) => (prev + 1) % heroCards.length);
     }, 3600);
     return () => clearInterval(interval);
-  }, []);
+  }, [prefersReducedMotion]);
+
+  useEffect(() => {
+    if (!showCheckout || municipalityOptions.length > 0) return;
+    let cancelled = false;
+    import('../data/colombiaMunicipalities').then(({ colombiaMunicipalities }) => {
+      if (!cancelled) setMunicipalityOptions(colombiaMunicipalities);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [showCheckout, municipalityOptions.length]);
 
   useEffect(() => {
     const handlePopState = () => setCurrentPath(window.location.pathname);
@@ -1532,7 +1555,7 @@ export default function App() {
                     ))}
 
                     <datalist id="colombia-municipalities">
-                      {colombiaMunicipalities.map((location, index) => (
+                      {municipalityOptions.map((location, index) => (
                         <option key={`${location}-${index}`} value={location} />
                       ))}
                     </datalist>
@@ -1666,5 +1689,3 @@ export default function App() {
     </div>
   );
 }
-
-
